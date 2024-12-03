@@ -1,0 +1,65 @@
+# Import required libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the CSV file
+file_path = "CSE_student_performances.csv"
+try:
+    data = pd.read_csv(file_path)
+    print("File loaded successfully!")
+except FileNotFoundError:
+    print("File not found. Please check the file path.")
+
+# Display basic information about the data
+print("\nDataset Overview:")
+print(data.head())  # First 5 rows
+print("\nData Info:")
+print(data.info())  # Columns and data types
+
+# Data Cleaning: Check for missing values
+print("\nMissing Values:")
+print(data.isnull().sum())
+
+# Handle missing values (Example: Fill with mean or drop rows)
+data.fillna(data.mean(numeric_only=True), inplace=True)
+
+# Basic Statistics
+print("\nBasic Statistics:")
+print(data.describe())
+
+# Analyze Performance: Average Marks by Subject
+if 'Marks' in data.columns and 'Subject' in data.columns:
+    subject_avg = data.groupby('Subject')['Marks'].mean()
+    print("\nAverage Marks by Subject:")
+    print(subject_avg)
+
+    # Visualization: Average Marks by Subject
+    subject_avg.plot(kind='bar', color='skyblue', title='Average Marks by Subject', figsize=(8, 5))
+    plt.xlabel('Subject')
+    plt.ylabel('Average Marks')
+    plt.show()
+
+# Attendance Analysis
+if 'Attendance' in data.columns:
+    attendance_stats = data['Attendance'].describe()
+    print("\nAttendance Statistics:")
+    print(attendance_stats)
+
+    # Visualization: Attendance Distribution
+    plt.hist(data['Attendance'], bins=10, color='green', alpha=0.7)
+    plt.title('Attendance Distribution')
+    plt.xlabel('Attendance (%)')
+    plt.ylabel('Number of Students')
+    plt.show()
+
+# Identify Top Performers
+if 'Marks' in data.columns:
+    top_performers = data.nlargest(5, 'Marks')  # Top 5 performers
+    print("\nTop Performers:")
+    print(top_performers)
+
+# Save processed data to a new file
+output_path = "processed_CSE_student_performances.csv"
+data.to_csv(output_path, index=False)
+print(f"\nProcessed data saved to {output_path}")
